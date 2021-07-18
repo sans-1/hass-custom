@@ -103,7 +103,7 @@ blueprint:
       default:
       selector:
         action: {}
-  source_url: https://community.home-assistant.io/t/zooz-z-wave-js-light-handler-v2/299050
+  source_url: https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml
 mode: parallel
 max: 10
 trigger:
