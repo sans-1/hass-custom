@@ -135,7 +135,7 @@ action:
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
     light_max_mireds: state_attr(light, 'max_mireds')
-    light_min_mireds: '{{ state_attr(light, 'min_mireds') }}'
+    light_min_mireds: {{ state_attr(light, 'min_mireds') }}
     light_color_temp: '{{ state_attr(light, 'color_temp') }}'
     color_temp_step: '{{ (((light_max_mireds|int - light_min_mireds|int)/100) * step|int) }}'
 - service: input_text.set_value
