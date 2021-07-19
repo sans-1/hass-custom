@@ -143,10 +143,10 @@ action:
     last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    light_max_mireds: '{{ state_attr(!input light_controlled, 'max_mireds')|int }}'
-    light_min_mireds: '{{ state_attr(!input light_controlled, 'min_mireds')|int }}'
-    light_color_temp: '{{ state_attr(!input light_controlled, 'color_temp')|int }}'
-    color_temp_step: '{{ ((light_max_mireds - light_min_mireds)/100) * !input step_pct }}'
+    light_max_mireds: '{{ states(!input light_controlled).max_mireds | int }}'
+    light_min_mireds: '{{ states(!input light_controlled).min_mireds | int }}'
+    light_color_temp: '{{ states(!input light_controlled).color_temp | int }}'
+    color_temp_step: '{{ (((light_max_mireds - light_min_mireds)/100) * !input step_pct) | int }}'
 - service: input_text.set_value
   data:
     entity_id: !input helper_last_controller_event
