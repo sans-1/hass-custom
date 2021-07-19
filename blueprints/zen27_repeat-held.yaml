@@ -134,9 +134,9 @@ action:
     last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    light_max_mireds: '{{ (state_attr(light|string, 'max_mireds')|int) }}'
-    light_min_mireds: '{{ (state_attr(light|string, 'min_mireds')|int) }}'
-    light_color_temp: '{{ (state_attr(light|string, 'color_temp')|int) }}'
+    light_max_mireds: '{{ states(light).max_mireds }}'
+    light_min_mireds: '{{ states(light).min_mireds }}'
+    light_color_temp: '{{ states(light).color_temp }}'
     color_temp_step: '{{ (((light_max_mireds - light_min_mireds)/100)|int * step|int)|int }}'
 - service: input_text.set_value
   data:
