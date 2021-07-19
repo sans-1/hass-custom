@@ -59,12 +59,6 @@ blueprint:
       default:
       selector:
         action: {}
-    up_held_until_released:
-      name: Up Held Until Released
-      description: Pick an action for when the light switch UP button is held until released.
-      default:
-      selector:
-        action: {}
     press_down_1x:
       name: 1x Press Down
       description: Pick an action when the Down button is pressed once
@@ -92,12 +86,6 @@ blueprint:
     press_down_5x:
       name: 5x Press Down
       description: Pick an action when the Down button is pressed five times
-      default:
-      selector:
-        action: {}
-    down_held_until_released:
-      name: Down Held Until Released
-      description: Pick an action for when the light switch DOWN button is held until released.
       default:
       selector:
         action: {}
