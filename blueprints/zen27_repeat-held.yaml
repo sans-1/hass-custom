@@ -105,9 +105,13 @@ blueprint:
       name: Step Percentage While Held
       description: Step Percentage increased/decreased per 0.5 seconds when the Up/Down button is held
       default: 10
-      number:
-        min: 1
-        max: 20
+      selector:
+        number:
+          min: 1
+          max: 20
+          step: 1
+          unit_of_measurement: "%"
+          mode: slider
   source_url: https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml
 mode: parallel
 max: 10
