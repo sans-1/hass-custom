@@ -195,7 +195,7 @@ action:
     - '{{ is_state(light, "on") }}'
     sequence:
       - repeat:
-          while: []
+          while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               data_template:
@@ -213,7 +213,7 @@ action:
     - '{{ is_state(light, "on") }}'
     sequence:
       - repeat:
-          while: []
+          while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               data_template:
@@ -248,7 +248,7 @@ action:
     - '{{ is_state(light, "on") }}'
     sequence:
       - repeat:
-          while: []
+          while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               data_template:
@@ -266,7 +266,7 @@ action:
     - '{{ is_state(light, "on") }}'
     sequence:
       - repeat:
-          while: []
+          while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               data_template:
