@@ -170,26 +170,38 @@ action:
     value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"last_triggered":now()|string} | to_json }}'
 - choose:
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyPressed" }}'
     sequence: !input "press_up_1x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyPressed2x" }}'
     sequence: !input "press_up_2x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyPressed3x" }}'
     sequence: !input "press_up_3x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyPressed4x" }}'
     sequence: !input "press_up_4x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyPressed5x" }}'
     sequence: !input "press_up_5x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
     - '{{ is_state(light, "on") }}'
@@ -206,6 +218,8 @@ action:
             - delay:
                 milliseconds: 500
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
     - '{{ last_scene_id: == up_scene }}'
@@ -225,26 +239,38 @@ action:
             - delay:
                 milliseconds: 500
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed" }}'
     sequence: !input "press_down_1x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed2x" }}'
     sequence: !input "press_down_2x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed3x" }}'
     sequence: !input "press_down_3x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed4x" }}'
     sequence: !input "press_down_4x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed5x" }}'
     sequence: !input "press_down_5x"
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
     - '{{ is_state(light, "on") }}'
@@ -261,6 +287,8 @@ action:
             - delay:
                 milliseconds: 500
   - conditions:
+    - condition: and
+    conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
     - '{{ last_scene_id: == down_scene }}'
