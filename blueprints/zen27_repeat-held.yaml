@@ -198,12 +198,13 @@ action:
           while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
-              data_template:
+              target:
                 entity_id: !input "light"
+              data:
                 brightness_step_pct: '{{ step|int }}'
                 transition: 0.5
             - delay:
-              milliseconds: 500
+                milliseconds: 500
   - conditions:
     - '{{ scene_id == up_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
@@ -216,12 +217,13 @@ action:
           while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
-              data_template:
+              target:
                 entity_id: !input "light"
+              data:
                 color_temp: '{% if (light_color_temp|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ light_color_temp|int + color_temp_step|int }} {% endif %}'
                 transition: 0.5
             - delay:
-              milliseconds: 500
+                milliseconds: 500
   - conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyPressed" }}'
@@ -251,12 +253,13 @@ action:
           while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
-              data_template:
-                device_id: !input "light"
+              target:
+                entity_id: !input "light"
+              data:
                 brightness_step_pct: '{{ step|int * -1 }}'
                 transition: 0.5
             - delay:
-              milliseconds: 500
+                milliseconds: 500
   - conditions:
     - '{{ scene_id == down_scene }}'
     - '{{ scene_value == "KeyHeldDown" }}'
@@ -269,10 +272,11 @@ action:
           while: '{{ last_scene_value != "KeyReleased" }}'
           sequence:
             - service: light.turn_on
-              data_template:
+              target:
                 entity_id: !input "light"
+              data:
                 color_temp: '{% if (light_color_temp|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ light_color_temp|int - color_temp_step|int }} {% endif %}'
                 transition: 0.5
             - delay:
-              milliseconds: 500
+                milliseconds: 500
   default: []
