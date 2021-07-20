@@ -172,7 +172,7 @@ action:
           sequence:
             - service: light.turn_on
               data_template:
-                entity_id: !input light_controlled
+                entity_id: !input light
                 brightness_step_pct: '{{ step|int }}'
                 transition: 0.5
             - delay:
@@ -190,7 +190,7 @@ action:
           sequence:
             - service: light.turn_on
               data_template:
-                entity_id: !input light_controlled
+                entity_id: !input light
                 color_temp: '{% if (light_color_temp + color_temp_step) > light_max_mireds %} light_max_mireds {% else %} (light_color_temp + color_temp_step) {% endif %}'
                 transition: 0.5
             - delay:
@@ -225,7 +225,7 @@ action:
           sequence:
             - service: light.turn_on
               data_template:
-                device_id: !input light_controlled
+                device_id: !input light
                 brightness_step_pct: '{{ step|int * -1 }}'
                 transition: 0.5
             - delay:
@@ -243,7 +243,7 @@ action:
           sequence:
             - service: light.turn_on
               data_template:
-                entity_id: !input light_controlled
+                entity_id: !input light
                 color_temp: '{% if (light_color_temp - color_temp_step) < light_min_mireds %} light_min_mireds {% else %} (light_color_temp - color_temp_step) {% endif %}'
                 transition: 0.5
             - delay:
