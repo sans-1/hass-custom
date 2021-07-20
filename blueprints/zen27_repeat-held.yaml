@@ -157,12 +157,12 @@ action:
     last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    light_min_mireds: '{{ states(light).min_mireds
-      if states(light).min_mireds is not none else color_temp_min }}'
-    light_max_mireds: '{{ states(light).max_mireds
-      if states(light).max_mireds is not none else color_temp_max }}'
-    light_color_temp: '{{ states(light).color_temp
-      if states(light).color_temp is not none else (light_max_mireds - light_min_mireds)/2 }}'
+    light_min_mireds: '{{ state_attr(light,"min_mireds")
+      if state_attr(light,"min_mireds") is not none else color_temp_min }}'
+    light_max_mireds: '{{ state_attr(light,"max_mireds")
+      if state_attr(light,"max_mireds") is not none else color_temp_max }}'
+    light_color_temp: '{{ state_attr(light,"color_temp")
+      if state_attr(light,"color_temp") is not none else (light_max_mireds - light_min_mireds)/2 }}'
     color_temp_step: '{{ ((light_max_mireds - light_min_mireds)/100) * step }}'
 - service: input_text.set_value
   data:
