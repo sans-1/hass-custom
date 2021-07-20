@@ -158,12 +158,12 @@ action:
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
     light_min_mireds: '{{ state_attr(light,"min_mireds")
-      if state_attr(light,"min_mireds") is not none else color_temp_min }}'
+      if state_attr(light,"min_mireds") is not none else color_temp_min|int }}'
     light_max_mireds: '{{ state_attr(light,"max_mireds")
-      if state_attr(light,"max_mireds") is not none else color_temp_max }}'
+      if state_attr(light,"max_mireds") is not none else color_temp_max|int }}'
     light_color_temp: '{{ state_attr(light,"color_temp")
-      if state_attr(light,"color_temp") is not none else (light_max_mireds - light_min_mireds)/2 }}'
-    color_temp_step: '{{ ((light_max_mireds - light_min_mireds)/100) * step }}'
+      if state_attr(light,"color_temp") is not none else (light_max_mireds|int - light_min_mireds|int)/2 }}'
+    color_temp_step: '{{ ((light_max_mireds|int - light_min_mireds|int)/100) * step|int }}'
 - service: input_text.set_value
   data:
     entity_id: !input "helper_last_controller_event"
@@ -200,7 +200,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                brightness_step_pct: '{{ step }}'
+                brightness_step_pct: '{{ step|int }}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -218,7 +218,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                color_temp: '{% if (light_color_temp + color_temp_step) > light_max_mireds %} {{ light_max_mireds }} {% else %} {{ light_color_temp + color_temp_step }} {% endif %}'
+                color_temp: '{% if (light_color_temp|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ light_color_temp|int + color_temp_step|int }} {% endif %}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -253,7 +253,7 @@ action:
             - service: light.turn_on
               data_template:
                 device_id: !input "light"
-                brightness_step_pct: '{{ step * -1 }}'
+                brightness_step_pct: '{{ step|int * -1 }}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -271,7 +271,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                color_temp: '{% if (light_color_temp - color_temp_step) < light_min_mireds %} {{ light_min_mireds }} {% else %} {{ light_color_temp - color_temp_step }} {% endif %}'
+                color_temp: '{% if (light_color_temp|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ light_color_temp|int - color_temp_step|int }} {% endif %}'
                 transition: 0.5
             - delay:
               milliseconds: 500
