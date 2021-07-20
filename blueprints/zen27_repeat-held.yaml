@@ -165,15 +165,12 @@ action:
       if state_attr(light,"color_temp") is not none else (light_max_mireds|int - light_min_mireds|int)/2 }}'
     color_temp_step: '{{ ((light_max_mireds|int - light_min_mireds|int)/100) * step|int }}'
 - service: input_text.set_value
-  data:
+  target:
     entity_id: !input "helper_last_controller_event"
+  data:
     value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"last_triggered":now()|string} | to_json }}'
 - choose:
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed" }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" }}'
     sequence: !input "press_up_1x"
   - conditions:
     - condition: template
