@@ -157,10 +157,13 @@ action:
     last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value
       if helper_last_controller_event is not none and (states(helper_last_controller_event)
       | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    light_min_mireds: '{% if state_attr(light, "min_mireds") == None %} {{ color_temp_min }} {% else %} {{ state_attr(light, "min_mireds") }} {% endif %}'
-    light_max_mireds: '{% if state_attr(light, "max_mireds") == None %} {{ color_temp_max }} {% else %} {{ state_attr(light, "max_mireds") }} {% endif %}'
-    light_color_temp: '{% if state_attr(light, "color_temp") == None %} {{ ((light_max_mireds - light_min_mireds)/2)|int }} {% else %} {{ state_attr(light, "color_temp") }} {% endif %}'
-    color_temp_step: '{{ (((light_max_mireds - light_min_mireds)/100)|int * step|int) }}'
+    light_min_mireds: '{{ states(light).min_mireds
+      if states(light).min_mireds is not none else color_temp_min }}'
+    light_max_mireds: '{{ states(light).max_mireds
+      if states(light).max_mireds is not none else color_temp_max }}'
+    light_color_temp: '{{ states(light).color_temp
+      if states(light).color_temp is not none else (light_max_mireds - light_min_mireds)/2 }}'
+    color_temp_step: '{{ ((light_max_mireds - light_min_mireds)/100) * step }}'
 - service: input_text.set_value
   data:
     entity_id: !input "helper_last_controller_event"
@@ -197,7 +200,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                brightness_step_pct: '{{ step|int }}'
+                brightness_step_pct: '{{ step }}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -215,7 +218,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                color_temp: '{% if (light_color_temp + color_temp_step) > light_max_mireds %} light_max_mireds {% else %} (light_color_temp + color_temp_step) {% endif %}'
+                color_temp: '{% if (light_color_temp + color_temp_step) > light_max_mireds %} {{ light_max_mireds }} {% else %} {{ light_color_temp + color_temp_step }} {% endif %}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -250,7 +253,7 @@ action:
             - service: light.turn_on
               data_template:
                 device_id: !input "light"
-                brightness_step_pct: '{{ step|int * -1 }}'
+                brightness_step_pct: '{{ step * -1 }}'
                 transition: 0.5
             - delay:
               milliseconds: 500
@@ -268,7 +271,7 @@ action:
             - service: light.turn_on
               data_template:
                 entity_id: !input "light"
-                color_temp: '{% if (light_color_temp - color_temp_step) < light_min_mireds %} light_min_mireds {% else %} (light_color_temp - color_temp_step) {% endif %}'
+                color_temp: '{% if (light_color_temp - color_temp_step) < light_min_mireds %} {{ light_min_mireds }} {% else %} {{ light_color_temp - color_temp_step }} {% endif %}'
                 transition: 0.5
             - delay:
               milliseconds: 500
