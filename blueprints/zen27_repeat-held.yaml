@@ -162,37 +162,15 @@ action:
 - choose:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" }}'
     sequence: !input "press_up_1x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed2x" }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed2x" }}'
     sequence: !input "press_up_2x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed3x" }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed3x" }}'
     sequence: !input "press_up_3x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed4x" }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed4x" }}'
     sequence: !input "press_up_4x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed5x" }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed5x" }}'
     sequence: !input "press_up_5x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyHeldDown" }}'
-    - condition: template
-      value_template: '{{ is_state(light, "on") }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
       - repeat:
           while: []
@@ -205,19 +183,7 @@ action:
                 transition: 0.5
             - delay:
                 milliseconds: 500
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == up_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyHeldDown" }}'
-    - condition: template
-      value_template: '{{ last_scene_id: == up_scene }}'
-    - condition: template
-      value_template: '{{ last_scene_value == "KeyPressed" }}'
-    - condition: template
-      value_template: '{{ trigger_delta|int <= 2000 }}'
-    - condition: template
-      value_template: '{{ is_state(light, "on") }}'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
     sequence:
       - repeat:
           while: []
@@ -230,43 +196,17 @@ action:
                 transition: 0.5
             - delay:
                 milliseconds: 500
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed" }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed" }}'
     sequence: !input "press_down_1x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed2x" }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed2x" }}'
     sequence: !input "press_down_2x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed3x" }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed3x" }}'
     sequence: !input "press_down_3x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed4x" }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed4x" }}'
     sequence: !input "press_down_4x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyPressed5x" }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed5x" }}'
     sequence: !input "press_down_5x"
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyHeldDown" }}'
-    - condition: template
-      value_template: '{{ is_state(light, "on") }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
       - repeat:
           while: []
@@ -279,19 +219,7 @@ action:
                 transition: 0.5
             - delay:
                 milliseconds: 500
-  - conditions:
-    - condition: template
-      value_template: '{{ scene_id == down_scene }}'
-    - condition: template
-      value_template: '{{ scene_value == "KeyHeldDown" }}'
-    - condition: template
-      value_template: '{{ last_scene_id: == down_scene }}'
-    - condition: template
-      value_template: '{{ last_scene_value == "KeyPressed" }}'
-    - condition: template
-      value_template: '{{ trigger_delta|int <= 2000 }}'
-    - condition: template
-      value_template: '{{ is_state(light, "on") }}'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
     sequence:
       - repeat:
           while: []
