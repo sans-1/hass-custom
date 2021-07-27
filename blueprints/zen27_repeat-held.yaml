@@ -173,7 +173,7 @@ action:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
       - repeat:
-          until: '{{ last_scene_id == up_scene and last_scene_value == "KeyReleased" }}'
+          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == up_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               target:
@@ -186,7 +186,7 @@ action:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
     sequence:
       - repeat:
-          until: '{{ last_scene_id == up_scene and last_scene_value == "KeyReleased" }}'
+          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == up_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               target:
@@ -209,7 +209,7 @@ action:
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
       - repeat:
-          until: '{{ last_scene_id == down_scene and last_scene_value == "KeyReleased" }}'
+          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == down_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               target:
@@ -222,7 +222,7 @@ action:
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
     sequence:
       - repeat:
-          until: '{{ last_scene_id == down_scene and last_scene_value == "KeyReleased" }}'
+          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == down_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
           sequence:
             - service: light.turn_on
               target:
