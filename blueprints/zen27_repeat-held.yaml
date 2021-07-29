@@ -1,107 +1,133 @@
 blueprint:
-  name: ZEN27 Dimmer Light Switch
-  description: Trigger actions from pressing & holding buttons
+  name: 'ZEN27 Dimmmer Light Switch (Brightness/Temperature)'
+  description: 'Control a RGBW/RGB+CCT/CCT light with Zooz ZEN27 dimmer light switch
+Features:
+  - Press Up/Down button once to turn light on/off
+  - Hold down Up/Down button to gradually increase/decrease light brightness
+  - Press & release Up/Down button, then press & hold same button to gradually warm/cool white light color temperature'
+  source_url: 'https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml'
   domain: automation
   input:
     light_switch:
-      name: ZEN27 Switch
-      description: ZEN27 Switch that will control the designated light
+      name: 'ZEN27 Switch'
+      description: 'ZEN27 Dimmmer Light Switch to control light [REQUIRED]'
       selector:
         device:
           integration: zwave_js
           manufacturer: Zooz
     light:
-      name: Light
-      description: Light to be controlled
+      name: 'Light (RGBW/RGB+CCT/CCT)'
+      description: 'Light to be controlled by ZEN27 switch [REQUIRED]'
       selector:
         entity:
           domain: light
     helper_last_controller_event:
-      name: Helper - Last Controller Event
-      description: Input Text to store the last event fired
+      name: 'Helper - Last Controller Event'
+      description: 'Input Text helper entity used to store last event fired as JSON string (Length >= 200) [REQUIRED]'
       selector:
         entity:
           domain: input_text
     old_firmware:
-      name: Old Firmware
-      description: Enable if the Up & Down actions are reversed
+      name: 'Old Firmware'
+      description: 'Enable if Up & Down actions are reversed'
       default: false
       selector:
         boolean: {}
-    press_up_1x:
-      name: 1x Press Up
-      description: Pick an action when the Up button is pressed once
-      default:
+    transition_on_off:
+      name: 'Transition Time On/Off'
+      description: 'Number of seconds over which the light will gradually turn on or off, when the Up/Down button is pressed once'
+      default: 2
       selector:
-        action: {}
-    press_up_2x:
-      name: 2x Press Up
-      description: Pick an action when the Up button is pressed twice
-      default:
+        number:
+          min: 0
+          max: 5
+          step: 1
+          unit_of_measurement: seconds
+          mode: slider
+    transition_step:
+      name: 'Transition Time Per Step'
+      description: 'Number of seconds per step over which the light attribute will gradually increase/decrease, while the Up/Down button is held'
+      default: 1
       selector:
-        action: {}
-    press_up_3x:
-      name: 3x Press Up
-      description: Pick an action when the Up button is pressed three times
-      default:
-      selector:
-        action: {}
-    press_up_4x:
-      name: 4x Press Up
-      description: Pick an action when the Up button is pressed four times
-      default:
-      selector:
-        action: {}
-    press_up_5x:
-      name: 5x Press Up
-      description: Pick an action when the Up button is pressed five times
-      default:
-      selector:
-        action: {}
-    press_down_1x:
-      name: 1x Press Down
-      description: Pick an action when the Down button is pressed once
-      default:
-      selector:
-        action: {}
-    press_down_2x:
-      name: 2x Press Down
-      description: Pick an action when the Down button is pressed twice
-      default:
-      selector:
-        action: {}
-    press_down_3x:
-      name: 3x Press Down
-      description: Pick an action when the Down button is pressed three times
-      default:
-      selector:
-        action: {}
-    press_down_4x:
-      name: 4x Press Down
-      description: Pick an action when the Down button is pressed four times
-      default:
-      selector:
-        action: {}
-    press_down_5x:
-      name: 5x Press Down
-      description: Pick an action when the Down button is pressed five times
-      default:
-      selector:
-        action: {}
+        number:
+          min: 0
+          max: 5
+          step: 1
+          unit_of_measurement: seconds
+          mode: slider
     step:
-      name: Step Percentage While Held
-      description: Step Percentage increased/decreased per 0.5 seconds when the Up/Down button is held
+      name: 'Step Percentage While Held'
+      description: 'Percentage increased/decreased per step while the Up/Down button is held'
       default: 10
       selector:
         number:
           min: 1
           max: 20
           step: 1
-          unit_of_measurement: "%"
+          unit_of_measurement: '%'
+          mode: slider
+    press_up_2x:
+      name: 'Up: Pressed x 2'
+      description: 'Action to execute when Up button is pressed twice'
+      default:
+      selector:
+        action: {}
+    press_up_3x:
+      name: 'Up: Pressed x 3'
+      description: 'Action to execute when Up button is pressed three times'
+      default:
+      selector:
+        action: {}
+    press_up_4x:
+      name: 'Up: Pressed x 4'
+      description: 'Action to execute when Up button is pressed four times'
+      default:
+      selector:
+        action: {}
+    press_up_5x:
+      name: 'Up: Pressed x 5'
+      description: 'Action to execute when Up button is pressed five times'
+      default:
+      selector:
+        action: {}
+    press_down_2x:
+      name: 'Down: Pressed x 2'
+      description: 'Action to execute when Down button is pressed twice'
+      default:
+      selector:
+        action: {}
+    press_down_3x:
+      name: 'Down: Pressed x 3'
+      description: 'Action to execute when Down button is pressed three times'
+      default:
+      selector:
+        action: {}
+    press_down_4x:
+      name: 'Down: Pressed x 4'
+      description: 'Action to execute when Down button is pressed four times'
+      default:
+      selector:
+        action: {}
+    press_down_5x:
+      name: 'Down: Pressed x 5'
+      description: 'Action to execute when Down button is pressed five times'
+      default:
+      selector:
+        action: {}
+    delay_press_hold:
+      name: 'Maximum Delay from Press to Hold'
+      description: 'Maximum number of milliseconds between pressing & releasing the Up/Down button and then pressing & holding the same button'
+      default: 2000
+      selector:
+        number:
+          min: 100
+          max: 5000
+          step: 10
+          unit_of_measurement: milliseconds
           mode: slider
     color_temp_min:
-      name: Minimum Color Temperature
-      description: Minimum color temperature value in mireds for light entities with undefined 'min_mireds' attribute.
+      name: 'Default: Min Color Temperature'
+      description: 'Minimum color temperature value in mireds for light with undefined [min_mireds] attribute'
       default: 155
       selector:
         number:
@@ -111,8 +137,8 @@ blueprint:
           unit_of_measurement: mireds
           mode: slider
     color_temp_max:
-      name: Maximum Color Temperature
-      description: Maximum color temperature value in mireds for light entities with undefined 'max_mireds' attribute.
+      name: 'Default: Max Color Temperature'
+      description: 'Maximum color temperature value in mireds for light with undefined [max_mireds] attribute'
       default: 495
       selector:
         number:
@@ -121,115 +147,125 @@ blueprint:
           step: 1
           unit_of_measurement: mireds
           mode: slider
-  source_url: https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml
-mode: parallel
-max: 10
+variables:
+  scene_id: '{{ trigger.event.data.property_key_name }}'
+  scene_value: '{{ trigger.event.data.value }}'
+  up_scene: '{% if old_firmware == false %} 001 {% else %} 002 {% endif %}'
+  down_scene: '{% if old_firmware == false %} 002 {% else %} 001 {% endif %}'
+  light: !input 'light'
+  helper_last_controller_event: !input 'helper_last_controller_event'
+  old_firmware: !input 'old_firmware'
+  step: !input 'step'
+  delay: !input 'delay_press_hold'
+  color_temp_min: !input 'color_temp_min'
+  color_temp_max: !input 'color_temp_max'
+  last_scene_id: '{{ (states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
+  last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
+  light_min_mireds: '{{ state_attr(light,"min_mireds") if state_attr(light,"min_mireds") is not none else color_temp_min|int }}'
+  light_max_mireds: '{{ state_attr(light,"max_mireds") if state_attr(light,"max_mireds") is not none else color_temp_max|int }}'
+  light_color_temp: '{{ state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else (light_max_mireds|int - light_min_mireds|int)/2 }}'
+  color_temp_step: '{{ ((light_max_mireds|int - light_min_mireds|int)/100) * step|int }}'
+  trigger_delta: '{{ (as_timestamp(now()) - as_timestamp((states(helper_last_controller_event) | from_json).last_triggered if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "1970-01-01 00:00:00")) * 1000 }}'
+mode: restart
+max_exceeded: silent
 trigger:
 - platform: event
   event_type: zwave_js_value_notification
   event_data:
     command_class: 91
-    device_id: !input "light_switch"
-- platform: event
-  event_type: zwave_js_event
-  event_data:
-    command_class: 91
-    device_id: !input "light_switch"
+    device_id: !input 'light_switch'
+condition:
+- condition: not
+  conditions: '{{ scene_id == last_scene_id and scene_value == last_scene_value and is_state(light,"on") }}'
 action:
-- variables:
-    scene_id: '{{ trigger.event.data.property_key_name }}'
-    scene_value: '{{ trigger.event.data.value }}'
-    light: !input "light"
-    helper_last_controller_event: !input "helper_last_controller_event"
-    old_firmware: !input "old_firmware"
-    step: !input "step"
-    color_temp_min: !input "color_temp_min"
-    color_temp_max: !input "color_temp_max"
-    up_scene: '{% if old_firmware == false %} 001 {% else %} 002 {% endif %}'
-    down_scene: '{% if old_firmware == false %} 002 {% else %} 001 {% endif %}'
-    trigger_delta: '{{ (as_timestamp(now()) - as_timestamp((states(helper_last_controller_event) | from_json).last_triggered if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "1970-01-01 00:00:00")) * 1000 }}'
-    last_scene_id: '{{ (states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-    light_min_mireds: '{{ state_attr(light,"min_mireds") if state_attr(light,"min_mireds") is not none else color_temp_min|int }}'
-    light_max_mireds: '{{ state_attr(light,"max_mireds") if state_attr(light,"max_mireds") is not none else color_temp_max|int }}'
-    light_color_temp: '{{ state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else (light_max_mireds|int - light_min_mireds|int)/2 }}'
-    color_temp_step: '{{ ((light_max_mireds|int - light_min_mireds|int)/100) * step|int }}'
 - service: input_text.set_value
   target:
-    entity_id: !input "helper_last_controller_event"
+    entity_id: !input 'helper_last_controller_event'
   data:
     value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"last_triggered":now()|string} | to_json }}'
 - choose:
-  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" }}'
-    sequence: !input "press_up_1x"
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" and is_state(light,"off") }}'
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id: !input 'light'
+        data:
+          transition: !input 'transition_on_off'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed2x" }}'
-    sequence: !input "press_up_2x"
+    sequence: !input 'press_up_2x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed3x" }}'
-    sequence: !input "press_up_3x"
+    sequence: !input 'press_up_3x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed4x" }}'
-    sequence: !input "press_up_4x"
+    sequence: !input 'press_up_4x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed5x" }}'
-    sequence: !input "press_up_5x"
+    sequence: !input 'press_up_5x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
-      - repeat:
-          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == up_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
+      - choose:
+        - conditions: '{{ last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= delay|int }}'
           sequence:
-            - service: light.turn_on
-              target:
-                entity_id: !input "light"
-              data:
-                brightness_step_pct: '{{ step|int }}'
-                transition: 0.5
-            - delay:
-                milliseconds: 500
-  - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
+            - variables:
+                light_color_temp: '{% if (light_color_temp|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ light_color_temp|int + color_temp_step|int }} {% endif %}'
+            - repeat:
+                while: []
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input 'light'
+                    data:
+                      color_temp: '{{ light_color_temp }}'
+                      transition: !input 'transition_step'
+        default:
+          - repeat:
+              while: []
+              sequence:
+                - service: light.turn_on
+                  target:
+                    entity_id: !input 'light'
+                  data:
+                    brightness_step_pct: '{{ step|int }}'
+                    transition: !input 'transition_step'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed" and is_state(light,"on") }}'
     sequence:
-      - repeat:
-          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == up_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: !input "light"
-              data:
-                color_temp: '{% if (light_color_temp|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ light_color_temp|int + color_temp_step|int }} {% endif %}'
-                transition: 0.5
-            - delay:
-                milliseconds: 500
-  - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed" }}'
-    sequence: !input "press_down_1x"
+      - delay:
+          milliseconds: '{{ delay|int }}'
+      - service: light.turn_off
+        target:
+          entity_id: !input 'light'
+        data:
+          transition: !input 'transition_on_off'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed2x" }}'
-    sequence: !input "press_down_2x"
+    sequence: !input 'press_down_2x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed3x" }}'
-    sequence: !input "press_down_3x"
+    sequence: !input 'press_down_3x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed4x" }}'
-    sequence: !input "press_down_4x"
+    sequence: !input 'press_down_4x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed5x" }}'
-    sequence: !input "press_down_5x"
+    sequence: !input 'press_down_5x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") }}'
     sequence:
-      - repeat:
-          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == down_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
+      - choose:
+        - conditions: '{{ last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= delay|int }}'
           sequence:
-            - service: light.turn_on
-              target:
-                entity_id: !input "light"
-              data:
-                brightness_step_pct: '{{ step|int * -1 }}'
-                transition: 0.5
-            - delay:
-                milliseconds: 500
-  - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= 2000 and is_state(light,"on") }}'
-    sequence:
-      - repeat:
-          until: '{{ ((states(helper_last_controller_event) | from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == down_scene and ((states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "") == "KeyReleased" }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: !input "light"
-              data:
-                color_temp: '{% if (light_color_temp|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ light_color_temp|int - color_temp_step|int }} {% endif %}'
-                transition: 0.5
-            - delay:
-                milliseconds: 500
+            - variables:
+                light_color_temp: '{% if (light_color_temp|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ light_color_temp|int - color_temp_step|int }} {% endif %}'
+            - repeat:
+                while: []
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input 'light'
+                    data:
+                      color_temp: '{{ light_color_temp }}'
+                      transition: !input 'transition_step'
+        default:
+          - repeat:
+              while: []
+              sequence:
+                - service: light.turn_on
+                  target:
+                    entity_id: !input 'light'
+                  data:
+                    brightness_step_pct: '{{ step|int * -1 }}'
+                    transition: !input 'transition_step'
   default: []
