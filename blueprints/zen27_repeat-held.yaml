@@ -174,9 +174,7 @@ trigger:
   event_data:
     command_class: 91
     device_id: !input 'light_switch'
-condition:
-- condition: not
-  conditions: '{{ scene_id == last_scene_id and scene_value == last_scene_value and is_state(light,"on") }}'
+condition: '{{ scene_id != last_scene_id or scene_value != last_scene_value or is_state(light,"off") }}'
 action:
 - service: input_text.set_value
   target:
