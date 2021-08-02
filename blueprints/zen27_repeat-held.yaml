@@ -136,7 +136,7 @@ variables:
   light: !input 'light'
   helper_last_controller_event: !input 'helper_last_controller_event'
   step: !input 'step'
-  step_transition: '{{ step|int/10) }}'
+  step_transition: '{{ step|int/10 }}'
   max_delay: !input 'delay_press_hold'
   color_temp_min: !input 'color_temp_min'
   color_temp_max: !input 'color_temp_max'
