@@ -25,25 +25,14 @@ blueprint:
           domain: light
     helper_last_controller_event:
       name: 'Helper - Last Controller Event'
-      description: 'Input Text helper entity (length >= 250) to store last event fired as JSON string [REQUIRED]'
+      description: 'Input Text helper entity (Length >= 250) to store last event fired as JSON string [REQUIRED]'
       selector:
         entity:
           domain: input_text
-    transition_on_off:
-      name: 'Transition Time On/Off'
-      description: 'Number of seconds over which the light will gradually turn on or off, when the Up/Down button is pressed once'
-      default: 2
-      selector:
-        number:
-          min: 0
-          max: 5
-          step: 1
-          unit_of_measurement: seconds
-          mode: slider
     step:
       name: 'Step Percentage While Held'
       description: 'Percentage increased/decreased per step while the Up/Down button is held'
-      default: 5
+      default: 10
       selector:
         number:
           min: 1
@@ -147,7 +136,7 @@ variables:
   light: !input 'light'
   helper_last_controller_event: !input 'helper_last_controller_event'
   step: !input 'step'
-  step_delay: '{{ ((step|int/10) * 1000)|int }}'
+  step_transition: '{{ step|int/10) }}'
   max_delay: !input 'delay_press_hold'
   color_temp_min: !input 'color_temp_min'
   color_temp_max: !input 'color_temp_max'
@@ -156,8 +145,8 @@ variables:
   color_temp_step: '{{ (((light_max_mireds|int - light_min_mireds|int)/100) * step|int)|int }}'
   last_scene_id: '{{ (states(helper_last_controller_event)|from_json).scene_id if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
   last_scene_value: '{{ (states(helper_last_controller_event)|from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
-  last_scene_held: '{{ (states(helper_last_controller_event)|from_json).scene_held if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "none" }}'
-  trigger_delta: '{{ (as_timestamp(now()) - as_timestamp((states(helper_last_controller_event)|from_json).last_triggered if helper_last_controller_event is not none and (states(helper_last_controller_event)|regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "1970-01-01 00:00:00")) * 1000 }}'
+  last_hold_type: '{{ (states(helper_last_controller_event)|from_json).hold_type if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
+  trigger_delta: '{{ (as_timestamp(now()) - as_timestamp((states(helper_last_controller_event)|from_json).timestamp if helper_last_controller_event is not none and (states(helper_last_controller_event)|regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "1970-01-01 00:00:00")) * 1000 }}'
   debug_trigger_condition: '{{ not(scene_id == last_scene_id and scene_value == last_scene_value) or is_state(light,"off") }}'
 mode: restart
 max_exceeded: silent
@@ -172,15 +161,16 @@ action:
   target:
     entity_id: !input 'helper_last_controller_event'
   data:
-    value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"none","last_triggered":now()|string}|to_json }}'
+    value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"","timestamp":now()|string}|to_json }}'
+- service: homeassistant.update_entity
+  target:
+    entity_id: !input 'light'
 - choose:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" and is_state(light,"off") }}'
     sequence:
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         target:
           entity_id: !input 'light'
-        data:
-          transition: !input 'transition_on_off'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed2x" }}'
     sequence: !input 'press_up_2x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed3x" }}'
@@ -189,13 +179,13 @@ action:
     sequence: !input 'press_up_4x'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed5x" }}'
     sequence: !input 'press_up_5x'
-  - conditions: '{{ (scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "color_temp")) and ((last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= max_delay|int) or last_scene_held == "color_temp") }}'
+  - conditions: '{{ (scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "brightness") and ((last_scene_id == down_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= max_delay|int) or last_hold_type == "color_temp") }}'
     sequence:
       - service: input_text.set_value
         target:
           entity_id: !input 'helper_last_controller_event'
         data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"color_temp","last_triggered":now()|string}|to_json }}'
+          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"color_temp","timestamp":now()|string}|to_json }}'
       - repeat:
           while: []
           sequence:
@@ -204,15 +194,19 @@ action:
                 entity_id: !input 'light'
               data:
                 color_temp: '{% if (state_attr(light,"color_temp")|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ state_attr(light,"color_temp")|int + color_temp_step|int }} {% endif %}'
+                transition: '{{ step_transition }}'
             - delay:
-                milliseconds: '{{ step_delay|int }}'
-  - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "brightness") }}'
+                seconds: '{{ step_transition }}'
+            - service: homeassistant.update_entity
+              target:
+                entity_id: !input 'light'
+  - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "color_temp" }}'
     sequence:
       - service: input_text.set_value
         target:
           entity_id: !input 'helper_last_controller_event'
         data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"brightness","last_triggered":now()|string}|to_json }}'
+          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"brightness","timestamp":now()|string}|to_json }}'
       - repeat:
           while: []
           sequence:
@@ -221,17 +215,19 @@ action:
                 entity_id: !input 'light'
               data:
                 brightness_step_pct: '{{ step|int }}'
+                transition: '{{ step_transition }}'
             - delay:
-                milliseconds: '{{ step_delay|int }}'
+                seconds: '{{ step_transition }}'
+            - service: homeassistant.update_entity
+              target:
+                entity_id: !input 'light'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed" and is_state(light,"on") }}'
     sequence:
       - delay:
           milliseconds: '{{ max_delay|int }}'
-      - service: light.turn_off
+      - service: homeassistant.turn_off
         target:
           entity_id: !input 'light'
-        data:
-          transition: !input 'transition_on_off'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed2x" }}'
     sequence: !input 'press_down_2x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed3x" }}'
@@ -240,13 +236,13 @@ action:
     sequence: !input 'press_down_4x'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed5x" }}'
     sequence: !input 'press_down_5x'
-  - conditions: '{{ (scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "color_temp")) and ((last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= max_delay|int) or last_scene_held == "color_temp") }}'
+  - conditions: '{{ (scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "brightness") and ((last_scene_id == up_scene and last_scene_value == "KeyPressed" and trigger_delta|int <= max_delay|int) or last_hold_type == "color_temp") }}'
     sequence:
       - service: input_text.set_value
         target:
           entity_id: !input 'helper_last_controller_event'
         data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"color_temp","last_triggered":now()|string}|to_json }}'
+          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"color_temp","timestamp":now()|string}|to_json }}'
       - repeat:
           while: []
           sequence:
@@ -255,15 +251,19 @@ action:
                 entity_id: !input 'light'
               data:
                 color_temp: '{% if (state_attr(light,"color_temp")|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ state_attr(light,"color_temp")|int - color_temp_step|int }} {% endif %}'
+                transition: '{{ step_transition }}'
             - delay:
-                milliseconds: '{{ step_delay|int }}'
-  - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "brightness") }}'
+                seconds: '{{ step_transition }}'
+            - service: homeassistant.update_entity
+              target:
+                entity_id: !input 'light'
+  - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "color_temp" }}'
     sequence:
       - service: input_text.set_value
         target:
           entity_id: !input 'helper_last_controller_event'
         data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"brightness","last_triggered":now()|string}|to_json }}'
+          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"brightness","timestamp":now()|string}|to_json }}'
       - repeat:
           while: []
           sequence:
@@ -272,13 +272,10 @@ action:
                 entity_id: !input 'light'
               data:
                 brightness_step_pct: '{{ step|int * -1 }}'
+                transition: '{{ step_transition }}'
             - delay:
-                milliseconds: '{{ step_delay|int }}'
-  - conditions: '{{ scene_value == "KeyReleased" }}'
-    sequence:
-      - service: input_text.set_value
-        target:
-          entity_id: !input 'helper_last_controller_event'
-        data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"none","last_triggered":now()|string}|to_json }}'
+                seconds: '{{ step_transition }}'
+            - service: homeassistant.update_entity
+              target:
+                entity_id: !input 'light'
   default: []
