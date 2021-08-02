@@ -205,7 +205,7 @@ action:
               data:
                 color_temp: '{% if (state_attr(light,"color_temp")|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ state_attr(light,"color_temp")|int + color_temp_step|int }} {% endif %}'
             - delay:
-              milliseconds: '{{ step_delay|int }}'
+                milliseconds: '{{ step_delay|int }}'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "brightness") }}'
     sequence:
       - service: input_text.set_value
@@ -256,7 +256,7 @@ action:
               data:
                 color_temp: '{% if (state_attr(light,"color_temp")|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ state_attr(light,"color_temp")|int - color_temp_step|int }} {% endif %}'
             - delay:
-              milliseconds: '{{ step_delay|int }}'
+                milliseconds: '{{ step_delay|int }}'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and (last_scene_held == "none" or last_scene_held == "brightness") }}'
     sequence:
       - service: input_text.set_value
