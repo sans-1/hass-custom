@@ -2,13 +2,12 @@ blueprint:
   name: 'ZEN27 Dimmmer Light Switch (Brightness/Temperature)'
   source_url: 'https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml'
   description:
-   'Control a RGBW/RGB+CCT/CCT light with Zooz ZEN27 dimmer light switch
-
-    Features:
-     - Press Up/Down button once to turn light on/off
-     - Hold down Up/Down button to gradually increase/decrease brightness
-     - Press & release Down button, then hold Up button to gradually increase color temperature to be warmer
-     - Press & release Up button, then hold Down button to gradually decrease color temperature to be cooler'
+    'Control a RGBW/RGB+CCT/CCT light with Zooz ZEN27 dimmer light switch // 
+     Features: 
+      - Press Up/Down button once to turn light on/off / 
+      - Hold Up/Down button to gradually increase/decrease brightness / 
+      - Press Down button, then hold Up button to gradually increase color temperature to be warmer / 
+      - Press Up button, then hold Down button to gradually decrease color temperature to be cooler'
   domain: automation
   input:
     light_switch:
