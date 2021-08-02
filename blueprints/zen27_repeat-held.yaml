@@ -162,9 +162,6 @@ action:
     entity_id: !input 'helper_last_controller_event'
   data:
     value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"hold_type":"","timestamp":now()|string}|to_json }}'
-- service: homeassistant.update_entity
-  target:
-    entity_id: !input 'light'
 - choose:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" and is_state(light,"off") }}'
     sequence:
@@ -197,9 +194,6 @@ action:
                 transition: '{{ step_transition }}'
             - delay:
                 seconds: '{{ step_transition }}'
-            - service: homeassistant.update_entity
-              target:
-                entity_id: !input 'light'
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "color_temp" }}'
     sequence:
       - service: input_text.set_value
@@ -218,9 +212,6 @@ action:
                 transition: '{{ step_transition }}'
             - delay:
                 seconds: '{{ step_transition }}'
-            - service: homeassistant.update_entity
-              target:
-                entity_id: !input 'light'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyPressed" and is_state(light,"on") }}'
     sequence:
       - delay:
@@ -254,9 +245,6 @@ action:
                 transition: '{{ step_transition }}'
             - delay:
                 seconds: '{{ step_transition }}'
-            - service: homeassistant.update_entity
-              target:
-                entity_id: !input 'light'
   - conditions: '{{ scene_id == down_scene and scene_value == "KeyHeldDown" and is_state(light,"on") and last_hold_type != "color_temp" }}'
     sequence:
       - service: input_text.set_value
@@ -275,7 +263,4 @@ action:
                 transition: '{{ step_transition }}'
             - delay:
                 seconds: '{{ step_transition }}'
-            - service: homeassistant.update_entity
-              target:
-                entity_id: !input 'light'
   default: []
