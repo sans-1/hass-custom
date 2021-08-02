@@ -168,14 +168,11 @@ trigger:
     command_class: 91
     device_id: !input 'light_switch'
 action:
-- choose:
-  - conditions: '{{ scene_value != "KeyHeldDown" }}'
-    sequence:
-      - service: input_text.set_value
-        target:
-          entity_id: '{{ helper_last_controller_event }}'
-        data:
-          value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"none","last_triggered":now()|string}|to_json }}'
+- service: input_text.set_value
+  target:
+    entity_id: '{{ helper_last_controller_event }}'
+  data:
+    value: '{{ {"scene_id":scene_id,"scene_value":scene_value,"scene_held":"none","last_triggered":now()|string}|to_json }}'
 - choose:
   - conditions: '{{ scene_id == up_scene and scene_value == "KeyPressed" and is_state(light,"off") }}'
     sequence:
