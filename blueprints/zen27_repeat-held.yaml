@@ -165,8 +165,7 @@ variables:
   last_scene_value: '{{ (states(helper_last_controller_event) | from_json).scene_value if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "" }}'
   light_min_mireds: '{{ state_attr(light,"min_mireds") if state_attr(light,"min_mireds") is not none else color_temp_min|int }}'
   light_max_mireds: '{{ state_attr(light,"max_mireds") if state_attr(light,"max_mireds") is not none else color_temp_max|int }}'
-  light_color_temp: '{{ state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else (light_max_mireds|int - light_min_mireds|int)/2 }}'
-  color_temp_step: '{{ ((light_max_mireds|int - light_min_mireds|int)//100) * step|int }}'
+  color_temp_step: '{{ (((light_max_mireds|int - light_min_mireds|int)/100) * step|int)|int }}'
   trigger_delta: '{{ (as_timestamp(now()) - as_timestamp((states(helper_last_controller_event)|from_json).last_triggered if helper_last_controller_event is not none and (states(helper_last_controller_event)|regex_match("^\{(\".*\": \".*\"(, )?)*\}$")) else "1970-01-01 00:00:00")) * 1000 }}'
   debug_trigger_condition: '{{ not(scene_id == last_scene_id and scene_value == last_scene_value) or is_state(light,"off") }}'
 mode: restart
@@ -208,13 +207,11 @@ action:
             - repeat:
                 while: []
                 sequence:
-                  - variables:
-                      light_color_temp: '{% if (light_color_temp|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ light_color_temp|int + color_temp_step|int }} {% endif %}'
                   - service: light.turn_on
                     target:
                       entity_id: !input 'light'
                     data:
-                      color_temp: '{{ light_color_temp }}'
+                      color_temp: '{% if (state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else ((light_max_mireds|int - light_min_mireds|int)/2)|int + color_temp_step|int) > light_max_mireds|int %} {{ light_max_mireds|int }} {% else %} {{ state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else ((light_max_mireds|int - light_min_mireds|int)/2)|int + color_temp_step|int }} {% endif %}'
                       transition: !input 'transition_step'
                   - delay:
                       seconds: !input 'transition_step'
@@ -255,13 +252,11 @@ action:
             - repeat:
                 while: []
                 sequence:
-                  - variables:
-                      light_color_temp: '{% if (light_color_temp|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ light_color_temp|int - color_temp_step|int }} {% endif %}'
                   - service: light.turn_on
                     target:
                       entity_id: !input 'light'
                     data:
-                      color_temp: '{{ light_color_temp }}'
+                      color_temp: '{% if (state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else ((light_max_mireds|int - light_min_mireds|int)/2)|int - color_temp_step|int) < light_min_mireds|int %} {{ light_min_mireds|int }} {% else %} {{ state_attr(light,"color_temp") if state_attr(light,"color_temp") is not none else ((light_max_mireds|int - light_min_mireds|int)/2)|int - color_temp_step|int }} {% endif %}'
                       transition: !input 'transition_step'
                   - delay:
                       seconds: !input 'transition_step'
