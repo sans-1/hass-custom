@@ -32,11 +32,11 @@ blueprint:
     step:
       name: 'Step Percentage While Held'
       description: 'Percentage increased/decreased per step while the Up/Down button is held'
-      default: 10
+      default: 15
       selector:
         number:
           min: 1
-          max: 20
+          max: 50
           step: 1
           unit_of_measurement: '%'
           mode: slider
