@@ -1,6 +1,6 @@
 blueprint:
   name: 'ZEN27 Dimmmer Light Switch (Brightness/Temperature)'
-  source_url: 'https://github.com/sans-1/hass-custom/blob/main/blueprints/zen27_repeat-held.yaml'
+  source_url: 'https://github.com/sans-1/hass-custom/blob/main/blueprints/automation/zen27_repeat-held.yaml'
   description:
     'Control a RGBW/RGB+CCT/CCT light with Zooz ZEN27 dimmer light switch // 
      Features: 
